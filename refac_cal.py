@@ -116,6 +116,19 @@ def preguntar_coordenadas(filas, columnas, tipo):
         except ValueError:
             print("Por favor, introduce números válidos.")
 
+def preguntar_eliminar_obstaculo(mapa):
+    while True:
+        respuesta = input("¿Deseas eliminar algún obstáculo? (s/n): ").lower()
+        if respuesta == 's':
+            x, y = preguntar_coordenadas(mapa.filas, mapa.columnas, "eliminar obstáculo")
+            mapa.quitar_obstaculo(x, y)
+            print("Mapa después de eliminar el obstáculo:")
+            mapa.imprimir_mapa()
+        elif respuesta == 'n':
+            break
+        else:
+            print("Por favor, responde con 's' o 'n'.")
+
 def main():
     # Preguntar tamaño del mapa
     filas, columnas = preguntar_tamano_matriz()
@@ -135,14 +148,19 @@ def main():
             for i in range(num_obstaculos):
                 print(f"Agregando obstáculo {i+1} de {num_obstaculos}")
                 tipo_obstaculo = input("Introduce el tipo de obstáculo ('E' para edificio, 'A' para agua, 'B' para bloqueo): ").upper()
+                if tipo_obstaculo not in ('E', 'A', 'B'):
+                    raise ValueError("Tipo de obstáculo no válido.")
                 x, y = preguntar_coordenadas(filas, columnas, f"obstáculo {i+1}")
                 mapa.agregar_obstaculo(x, y, tipo_obstaculo)
             break
-        except ValueError:
-            print("Por favor, introduce un número válido.")
+        except ValueError as e:
+            print(e)
 
     print("Mapa con obstáculos:")
     mapa.imprimir_mapa()
+
+    # Preguntar si se desea eliminar algún obstáculo
+    preguntar_eliminar_obstaculo(mapa)
 
     # Verificar que el inicio y el fin sean transitables
     if not mapa.es_accesible(mapa.start[0], mapa.start[1]) or not mapa.es_accesible(mapa.end[0], mapa.end[1]):
